@@ -8,7 +8,7 @@
       </div>
       <div class="filters">
         <button @click="hideCompleted = !hideCompleted" class="button-74">
-          {{ hideCompleted ? 'Hide Complete' : 'View Complete' }}
+          {{ hideCompleted ? 'View Complete' : 'Hide Complete' }}
         </button>
       </div>
       <ul>
