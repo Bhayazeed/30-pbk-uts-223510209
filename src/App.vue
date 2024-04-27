@@ -71,7 +71,7 @@ loadData();
 
 
 <style scoped>@media (prefers-color-scheme: dark) {
-  ul li {
+  h2 ul li {
     color: #000; /* Mengatur warna teks pada daftar tugas menjadi hitam pada tema gelap */
   }
 }
