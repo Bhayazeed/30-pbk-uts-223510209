@@ -175,8 +175,6 @@ ul li span:hover {
 .filters{
   position: relative;
   padding-top: 3vh;
-  left: 10rem;
-  
 }
 
 .filters button{
@@ -185,6 +183,8 @@ ul li span:hover {
 
 
 .button-74 {
+  position: relative;
+  left: 10rem;
   background-color: #ffffff;
   border: 2px solid #151515;
   border-radius: 30px;
