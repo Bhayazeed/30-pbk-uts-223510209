@@ -70,7 +70,11 @@ loadData();
 </script>
 
 
-<style scoped>
+<style scoped>@media (prefers-color-scheme: dark) {
+  ul li {
+    color: #000; /* Mengatur warna teks pada daftar tugas menjadi hitam pada tema gelap */
+  }
+}
 .container {
   width: 100%;
   min-height: 100vh;
