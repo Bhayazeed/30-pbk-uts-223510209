@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="todo-app">
-      <h2>To-Do List</h2>
+      <h2>To-Do List Saya</h2>
       <div class="row">
         <input type="text" v-model="newTask" placeholder="Masukkan Agenda">
         <button @click="addTask">Tambah</button>
@@ -87,12 +87,18 @@ loadData();
 }
 
 .todo-app {
-  width: 100%;
+  width: 200%;
   max-width: 540px;
   background: #fff;
   margin: 100px auto 20px;
   padding: 40px 30px 70px;
   border-radius: 10px;
+}
+
+.todo-app h2{
+  color: rgb(60, 113, 113);
+  position: relative;
+  left: 25vh;
 }
 
 .row {
