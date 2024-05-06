@@ -12,9 +12,21 @@
         </button>
       </div>
       <ul>
-        <li v-for="(task, index) in filteredTodos" :key="task.id" :class="{ checked: task.checked }" @click="toggleTask(task)">
-          {{ task.text }}
-          <span @click.stop="removeTask(task)">&#xd7;</span>
+        <li
+          v-for="(task, index) in filteredTodos"
+          :key="task.id"
+          :class="{ checked: task.checked, editing: task.editing }"
+          @click="toggleTask(task)"
+        >
+          <template v-if="!task.editing">
+            {{ task.text }}
+            <span @click.stop="removeTask(task)" class="removebutton">&#xd7;</span>
+            <span @click.stop="editTask(task)" class="editbutton">&#x270E;</span>
+          </template>
+          <template v-else>
+            <input type="text" v-model="task.text" @keyup.enter="updateTask(task)">
+            <span @click.stop="cancelEdit(task)" class="editbutton">&#x2716;</span>
+          </template>
         </li>
       </ul>
     </div>
@@ -22,39 +34,61 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
-const newTask = ref('');
-const tasks = ref([]);
-const hideCompleted = ref(false);
+let id = 0
+
+const newTask = ref('')
+const hideCompleted = ref(false)
+const tasks = ref([
+  { id: id++, text: 'Learn HTML', checked: true, editing: false },
+  { id: id++, text: 'Learn JavaScript', checked: true, editing: false },
+  { id: id++, text: 'Learn Vue', checked: false, editing: false }
+])
+
+function toggleTask(task) {
+  if (!task.editing) {
+    task.checked = !task.checked;
+    saveData();
+  }
+}
 
 const filteredTodos = computed(() => {
   return hideCompleted.value
     ? tasks.value.filter((task) => !task.checked)
-    : tasks.value;
-});
+    : tasks.value
+})
 
 function addTask() {
   if (newTask.value.trim() === '') {
-    alert("Harus ada isi!");
+    alert("Agenda tidak boleh kosong!");
   } else {
-    tasks.value.unshift({ id: Date.now(), text: newTask.value, checked: false });
+    tasks.value.push({ id: id++, text: newTask.value, checked: false, editing: false });
     newTask.value = '';
     saveData();
   }
 }
 
-function toggleTask(task) {
-  task.checked = !task.checked; 
-  saveData();
+function removeTask(task) {
+  tasks.value = tasks.value.filter((t) => t !== task)
 }
 
-function removeTask(task) {
-  const index = tasks.value.findIndex((t) => t.id === task.id);
-  if (index !== -1) {
-    tasks.value.splice(index, 1);
+function editTask(task) {
+  task.editing = true;
+  task.checked = false; 
+}
+
+function updateTask(task) {
+  if (task.text.trim() === '') {
+    alert("Harus ada isi!");
+  } else {
+    task.editing = false;
     saveData();
   }
+}
+
+function cancelEdit(task) {
+  task.editing = false;
 }
 
 function saveData() {
@@ -72,7 +106,7 @@ loadData();
 
 <style scoped>@media (prefers-color-scheme: dark) {
   h2 ul li {
-    color: #000; /* Mengatur warna teks pada daftar tugas menjadi hitam pada tema gelap */
+    color: #000; 
   }
 }
 .container {
@@ -84,6 +118,7 @@ loadData();
   margin-top: -10px;
   margin-left: -10px;
   margin-bottom: -10px;
+
 }
 
 .todo-app {
@@ -161,7 +196,7 @@ ul li.checked::before {
   background-image: url(assets/checked.png);
 }
 
-ul li span {
+.removebutton {
   position: absolute;
   right: 0;
   top: 5px;
@@ -174,8 +209,21 @@ ul li span {
   border-radius: 50%;
 }
 
-ul li span:hover {
+.removebutton:hover {
   background: #edeef0;
+}
+
+.editbutton {
+  position: absolute;
+  right: 45px; 
+  top: 5px;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  color: #555;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
 }
 
 .filters{
