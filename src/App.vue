@@ -105,7 +105,7 @@ loadData();
 
 
 <style scoped>@media (prefers-color-scheme: dark) {
-  h2 ul li {
+  .todo-app h2 ul li {
     color: #000; 
   }
 }
@@ -145,7 +145,7 @@ loadData();
   padding-left: 20px;
 }
 
-input {
+.row input {
   flex: 1;
   border: none;
   outline: none;
@@ -165,7 +165,7 @@ input {
   border-radius: 40px;
 }
 
-ul li {
+.filters ul li {
   list-style: none;
   font-size: 17px;
   padding: 12px 8px 12px 50px;
@@ -174,7 +174,7 @@ ul li {
   position: relative;
 }
 
-ul li::before {
+.filters ul li::before {
   content: '';
   position: absolute;
   height: 28px;
@@ -187,12 +187,12 @@ ul li::before {
   left: 8px;
 }
 
-ul li.checked {
+.filters ul li.checked {
   color: #555;
   text-decoration: line-through;
 }
 
-ul li.checked::before {
+.filters ul li.checked::before {
   background-image: url(assets/checked.png);
 }
 
