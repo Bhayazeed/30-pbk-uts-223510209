@@ -1,113 +1,127 @@
 <template>
-    <div class="container">
-      <header class="header">
-        <nav class="navbar">
-            <router-link to="/" class="active">Todo App</router-link>
-            <router-link to="/posts">Posts</router-link>
-        </nav>
-      </header>
-      <div class="todo-app" id="todo-app">
-        <h2>To-Do List Saya</h2>
-        <div class="row">
-          <input type="text" v-model="newTask" placeholder="Masukkan Agenda">
-          <button @click="addTask">Tambah</button>
-        </div>
-        <div class="filters">
-          <button @click="hideCompleted = !hideCompleted" class="button-74">
-            {{ hideCompleted ? 'View Complete' : 'Hide Complete' }}
-          </button>
-        </div>
-        <ul class="lists">
-          <li
-            v-for="(task, index) in filteredTodos"
-            :key="task.id"
-            :class="{ checked: task.checked, editing: task.editing }"
-            @click="toggleTask(task)"
-          >
-            <template v-if="!task.editing">
-              {{ task.text }}
-              <span @click.stop="removeTask(task)" class="removebutton">&#xd7;</span>
-              <span @click.stop="editTask(task)" class="editbutton">&#x270E;</span>
-            </template>
-            <template v-else>
-              <input type="text" v-model="task.text" @keyup.enter="updateTask(task)">
-              <span @click.stop="cancelEdit(task)" class="editbutton">&#x2716;</span>
-            </template>
-          </li>
-        </ul>
+  <div class="container">
+    <header class="header">
+      <nav class="navbar">
+        <router-link to="/" class="active">Todo App</router-link>
+        <router-link to="/posts">Posts</router-link>
+      </nav>
+    </header>
+    <div class="todo-app" id="todo-app">
+      <h2>To-Do List Saya</h2>
+      <div class="row">
+        <input type="text" v-model="newTask" placeholder="Masukkan Agenda">
+        <button @click="addTask">Tambah</button>
       </div>
+      <div class="filters">
+        <button @click="hideCompleted = !hideCompleted" class="button-74">
+          {{ hideCompleted ? 'View Complete' : 'Hide Complete' }}
+        </button>
+      </div>
+      <ul class="lists">
+        <li
+          v-for="(task, index) in filteredTodos"
+          :key="task.id"
+          :class="{ checked: task.checked, editing: task.editing }"
+          @click="toggleTask(task)"
+        >
+          <template v-if="!task.editing">
+            {{ task.text }}
+            <span @click.stop="removeTask(task)" class="removebutton">&#xd7;</span>
+            <span @click.stop="editTask(task)" class="editbutton">&#x270E;</span>
+          </template>
+          <template v-else>
+            <input type="text" v-model="task.text" @keyup.enter="updateTask(task)">
+            <span @click.stop="cancelEdit(task)" class="editbutton">&#x2716;</span>
+          </template>
+        </li>
+      </ul>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, computed } from 'vue'
-  
-  let id = 0
-  
-  const newTask = ref('')
-  const hideCompleted = ref(false)
-  const tasks = ref([
-    { id: id++, text: 'Learn HTML', checked: true, editing: false },
-    { id: id++, text: 'Learn JavaScript', checked: true, editing: false },
-    { id: id++, text: 'Learn Vue', checked: false, editing: false }
-  ])
-  
-  function toggleTask(task) {
-    if (!task.editing) {
-      task.checked = !task.checked;
-      saveData();
-    }
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+
+// Define props using defineProps
+const props = defineProps({
+  initialTasks: {
+    type: Array,
+    default: () => [
+      { id: 0, text: 'Learn HTML', checked: true, editing: false },
+      { id: 1, text: 'Learn JavaScript', checked: true, editing: false },
+      { id: 2, text: 'Learn Vue', checked: false, editing: false }
+    ]
   }
-  
-  const filteredTodos = computed(() => {
-    return hideCompleted.value
-      ? tasks.value.filter((task) => !task.checked)
-      : tasks.value
-  })
-  
-  function addTask() {
-    if (newTask.value.trim() === '') {
-      alert("Agenda tidak boleh kosong!");
-    } else {
-      tasks.value.unshift({ id: id++, text: newTask.value, checked: false, editing: false });
-      newTask.value = '';
-      saveData();
-    }
+})
+
+let id = 3
+
+const newTask = ref('')
+const hideCompleted = ref(false)
+const tasks = ref([...props.initialTasks])
+
+function toggleTask(task) {
+  if (!task.editing) {
+    task.checked = !task.checked
+    saveData()
   }
-  
-  function removeTask(task) {
-    tasks.value = tasks.value.filter((t) => t !== task)
+}
+
+const filteredTodos = computed(() => {
+  return hideCompleted.value
+    ? tasks.value.filter((task) => !task.checked)
+    : tasks.value
+})
+
+function addTask() {
+  if (newTask.value.trim() === '') {
+    alert("Agenda tidak boleh kosong!")
+  } else {
+    tasks.value.unshift({ id: id++, text: newTask.value, checked: false, editing: false })
+    newTask.value = ''
+    saveData()
   }
-  
-  function editTask(task) {
-    task.editing = true;
-    task.checked = false; 
+}
+
+function removeTask(task) {
+  tasks.value = tasks.value.filter((t) => t !== task)
+  saveData()
+}
+
+function editTask(task) {
+  task.editing = true
+  task.checked = false
+}
+
+function updateTask(task) {
+  if (task.text.trim() === '') {
+    alert("Harus ada isi!")
+  } else {
+    task.editing = false
+    saveData()
   }
-  
-  function updateTask(task) {
-    if (task.text.trim() === '') {
-      alert("Harus ada isi!");
-    } else {
-      task.editing = false;
-      saveData();
-    }
-  }
-  
-  function cancelEdit(task) {
-    task.editing = false;
-  }
-  
-  function saveData() {
-    localStorage.setItem("tasks", JSON.stringify(tasks.value));
-  }
-  
-  function loadData() {
-    const savedTasks = localStorage.getItem("tasks");
-    tasks.value = savedTasks ? JSON.parse(savedTasks) : [];
-  }
-  
-  loadData();
-  </script>
+}
+
+function cancelEdit(task) {
+  task.editing = false
+}
+
+function saveData() {
+  localStorage.setItem("tasks", JSON.stringify(tasks.value))
+}
+
+function loadData() {
+  const savedTasks = localStorage.getItem("tasks")
+  tasks.value = savedTasks ? JSON.parse(savedTasks) : [...props.initialTasks]
+}
+
+loadData()
+
+// Watch for changes in initialTasks prop to update the tasks accordingly
+watch(() => props.initialTasks, (newTasks) => {
+  tasks.value = [...newTasks]
+}, { deep: true })
+</script>
   
   <style scoped>
   /* Global styles */
