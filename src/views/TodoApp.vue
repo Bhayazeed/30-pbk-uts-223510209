@@ -1,11 +1,5 @@
 <template>
   <div class="container">
-    <header class="header">
-      <nav class="navbar">
-        <router-link to="/" class="active">Todo App</router-link>
-        <router-link to="/posts">Posts</router-link>
-      </nav>
-    </header>
     <div class="todo-app" id="todo-app">
       <h2>To-Do List Saya</h2>
       <div class="row">
@@ -40,90 +34,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { useTodoStore } from '../store/todoStore'
+import { storeToRefs } from 'pinia'
 
-// Define props using defineProps
-const props = defineProps({
-  initialTasks: {
-    type: Array,
-    default: () => [
-      { id: 0, text: 'Learn HTML', checked: true, editing: false },
-      { id: 1, text: 'Learn JavaScript', checked: true, editing: false },
-      { id: 2, text: 'Learn Vue', checked: false, editing: false }
-    ]
-  }
-})
-
-let id = 3
-
-const newTask = ref('')
-const hideCompleted = ref(false)
-const tasks = ref([...props.initialTasks])
-
-function toggleTask(task) {
-  if (!task.editing) {
-    task.checked = !task.checked
-    saveData()
-  }
-}
-
-const filteredTodos = computed(() => {
-  return hideCompleted.value
-    ? tasks.value.filter((task) => !task.checked)
-    : tasks.value
-})
-
-function addTask() {
-  if (newTask.value.trim() === '') {
-    alert("Agenda tidak boleh kosong!")
-  } else {
-    tasks.value.unshift({ id: id++, text: newTask.value, checked: false, editing: false })
-    newTask.value = ''
-    saveData()
-  }
-}
-
-function removeTask(task) {
-  tasks.value = tasks.value.filter((t) => t !== task)
-  saveData()
-}
-
-function editTask(task) {
-  task.editing = true
-  task.checked = false
-}
-
-function updateTask(task) {
-  if (task.text.trim() === '') {
-    alert("Harus ada isi!")
-  } else {
-    task.editing = false
-    saveData()
-  }
-}
-
-function cancelEdit(task) {
-  task.editing = false
-}
-
-function saveData() {
-  localStorage.setItem("tasks", JSON.stringify(tasks.value))
-}
-
-function loadData() {
-  const savedTasks = localStorage.getItem("tasks")
-  tasks.value = savedTasks ? JSON.parse(savedTasks) : [...props.initialTasks]
-}
-
-loadData()
-
-// Watch for changes in initialTasks prop to update the tasks accordingly
-watch(() => props.initialTasks, (newTasks) => {
-  tasks.value = [...newTasks]
-}, { deep: true })
+const todoStore = useTodoStore()
+const { tasks, newTask, hideCompleted, filteredTodos } = storeToRefs(todoStore)
+const { addTask, toggleTask, removeTask, editTask, updateTask, cancelEdit } = todoStore
 </script>
   
-  <style scoped>
+<style scoped>
   /* Global styles */
   @media (prefers-color-scheme: dark) {
     .todo-app h2 ul li {
@@ -152,33 +71,13 @@ watch(() => props.initialTasks, (newTasks) => {
     margin: 0 3rem; /* Adjust margin for spacing between links */
     font-weight: 700;
     text-decoration: none; /* Remove underline from links */
-  }
-  
-  /* Header styles */
-  .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 2rem 0%;
-    z-index: 1000; 
-    background: linear-gradient(90deg, hsla(197, 30%, 54%, 1) 7%, hsla(275, 19%, 88%, 1) 100%);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
+  }  
   
   /* Container styles */
   .container {
-    width: 100%;
-    min-height: 100vh;
     background: -webkit-linear-gradient(90deg, hsla(120, 6%, 90%, 1) 0%, hsla(228, 75%, 16%, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#E4E7E4", endColorstr="#0A1647", GradientType=1 );
     padding: 10px;
-    margin-top: -10px;
-    margin-left: -10px;
-    margin-bottom: -10px;
   }
   
   /* Todo app styles */
