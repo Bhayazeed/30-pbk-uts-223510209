@@ -2,7 +2,7 @@
     <q-layout view="lHr lpR lfr">
       <q-header class="bg-primary text-white">
         <q-toolbar>
-          <q-toolbar-title>223510209-MBhayaziid</q-toolbar-title>
+          <q-toolbar-title>M. Bhayaziid Amalin PBK</q-toolbar-title>
           <q-tabs align="left">
             <q-route-tab to="/" label="Todo List" />
             <q-route-tab to="/posts" label="Post" />

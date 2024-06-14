@@ -5,7 +5,7 @@
         <q-img :src="photo.url" class="q-mb-md" :alt="photo.title" />
         <div>{{ photo.title }}</div>
         <q-btn @click="goBack" color="primary" class="q-mt-md"
-          >Back to Gallery</q-btn
+          >Kembali ke Album</q-btn
         >
       </q-card>
     </q-page>
